@@ -13,6 +13,8 @@ TRACE_INTERRUPT = False
 log = open('log', 'r')
 lines = log.readlines()
 
+switch_time = open('switch_time', 'w')
+
 tasks = {}
 events = []
 mutexes = {}
@@ -40,7 +42,9 @@ for line in lines :
 		
 		out_time = (float(tick) + (float(tick_reload) - float(out_minitick)) / float(tick_reload)) / 100 * 1000;
 		in_time  = (float(tick) + (float(tick_reload) - float(in_minitick))  / float(tick_reload)) / 100 * 1000;
-		
+
+		switch_time.write('time of context switch from %s to %s: %fms\n' % (out_task, in_task, in_time - out_time))
+
 		event = {}
 		event['type'] = 'task out'
 		event['task'] = out_task
@@ -164,6 +168,8 @@ for line in lines :
 			tasks[int_num]['created'] = True if dir == 'in' else False
 
 log.close()
+
+switch_time.close()
 
 grasp = open('sched.grasp', 'w')
 
